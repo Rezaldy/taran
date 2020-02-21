@@ -20,7 +20,7 @@
                 color="primary"
                 :icon="fasDice"
                 size="xl"
-                @click="rng = Math.floor(Math.random() * 100)"
+                @click="calculateRng"
               />
             </div>
           </div>
@@ -100,6 +100,9 @@
         methods: {
             formatToPrice(value) {
                 return `The number is ${Math.floor(value)}`;
+            },
+            calculateRng() {
+                this.$data.rng = Math.floor(Math.random() * 100);
             }
         },
         created() {
