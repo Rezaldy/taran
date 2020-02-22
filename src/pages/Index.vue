@@ -291,6 +291,10 @@
     .text-h4 {
       color: white;
     }
+
+    .q-item {
+      color: white;
+    }
   }
 
   .row {
