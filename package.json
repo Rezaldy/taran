@@ -19,8 +19,12 @@
     "animated-number-vue": "^1.0.0",
     "axios": "^0.18.1",
     "gsap": "^3.1.1",
+    "jquery": "^3.4.1",
     "quasar": "^1.0.0",
-    "vue-i18n": "^8.0.0"
+    "vue-i18n": "^8.0.0",
+    "vue-luckywheel": "^0.1.2",
+    "vue-winwheel": "^1.0.0",
+    "vue2-transitions": "^0.3.0"
   },
   "devDependencies": {
     "@quasar/app": "^1.0.0",
