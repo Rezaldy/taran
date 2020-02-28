@@ -84,7 +84,39 @@
       <div class="row sm-small-gutter md-gutter gt-md-large-gutter">
         <div class="col col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-4">
           <div class="widget-container">
+            <div class="col-12 text-h2 text-center q-mb-md">Lootlist picker</div>
+            <q-list bordered separator>
+              <q-item
+                clickable
+                v-ripple
+                v-for="(prize, index) in lootListOptions"
+                :key="index"
+                :active="prize.active"
+              >
+                <q-item-section avatar>
+                  <q-icon name="signal_wifi_off"/>
+                </q-item-section>
+                <q-item-section>Active</q-item-section>
+                <q-item-section side>Side</q-item-section>
+              </q-item>
+            </q-list>
 
+            <div class="row flex justify-evenly q-mt-md">
+              <q-btn
+                round
+                color="primary"
+                :icon="fasList"
+                size="xl"
+                @click="openLootList"
+              />
+              <q-btn
+                round
+                color="secondary"
+                :icon="fasUndoAlt"
+                size="xl"
+                @click="retrieveLootListOptions"
+              />
+            </div>
           </div>
         </div>
         <div class="col col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-4">
@@ -133,17 +165,17 @@
 
 <script>
     import Vue from 'vue';
-    import {fasDice, fasUndoAlt} from '@quasar/extras/fontawesome-v5';
-    import JQuery from 'jquery';
+    import { openURL } from 'quasar';
+    import {fasDice, fasUndoAlt, fasList} from '@quasar/extras/fontawesome-v5';
     import AnimatedNumber from "animated-number-vue";
     import VueLuckywheel from 'vue-luckywheel';
     import VueLuckywheelItem from 'vue-luckywheel';
     import 'vue-luckywheel/lib/vue-luckywheel.css';
+    import axios from 'axios';
     import {TimelineLite} from "gsap";
     import {SlideYUpTransition} from 'vue2-transitions';
 
     Vue.use(VueLuckywheel, VueLuckywheelItem);
-    window.$ = JQuery;
 
     export default {
         components: {
@@ -208,7 +240,7 @@
                         mode: 0,
                     },
                     {
-                        name: 'No Piety/Rigour/Augruy',
+                        name: 'No Piety/Rigour/Augury',
                         mode: 0,
                     },
                     {
@@ -232,6 +264,7 @@
                         mode: 0,
                     },
                 ],
+                lootListOptions: [],
             };
         },
         methods: {
@@ -263,11 +296,29 @@
                         prize.mode = 0;
                         break;
                 }
+            },
+            openLootList() {
+                openURL('https://twitch.center/customapi/quote/list?token=ba3ed13c');
+            },
+            retrieveLootListOptions() {
+                axios.get('//twitch.center/customapi/quote/list', {
+                    params: {
+                        token: 'ba3ed13c',
+                    }
+                }).then(
+                    (response) => {
+                        console.log(response.data);
+                    },
+                    (error) => {
+                        console.error(error);
+                    },
+                )
             }
         },
         created() {
             this.fasDice = fasDice;
             this.fasUndoAlt = fasUndoAlt;
+            this.fasList = fasList;
         }
     }
 </script>
