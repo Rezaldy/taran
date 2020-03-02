@@ -350,7 +350,7 @@
                         mode: 0,
                     },
                     {
-                        name: 'No Sang',
+                        name: 'No Magic',
                         mode: 0,
                     },
                     {
@@ -383,10 +383,6 @@
                     },
                     {
                         name: 'No specing',
-                        mode: 0,
-                    },
-                    {
-                        name: 'No supercombats',
                         mode: 0,
                     },
                     {
