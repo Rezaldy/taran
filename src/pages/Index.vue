@@ -8,9 +8,29 @@
               <div class="col-12 text-h3 text-center">Random number!</div>
             </div>
             <div class="row">
+              <div class="col-6">
+                <q-input
+                        label="Bottom border"
+                        v-model="rng.min"
+                        type="number"
+                        placeholder="Enter bottom border"
+                        class="q-ma-sm"
+                />
+              </div>
+              <div class="col-6">
+                <q-input
+                        label="Top border"
+                        v-model="rng.max"
+                        type="number"
+                        placeholder="Enter top border"
+                        class="q-ma-sm"
+                />
+              </div>
+            </div>
+            <div class="row">
               <div class="col-12 text-h4 text-center" id="rng">
                 <animated-number
-                  :value="rng"
+                  :value="rng.value"
                   :formatValue="formatToPrice"
                   :duration="1000"
                 />
@@ -339,7 +359,11 @@
         name: 'Home',
         data: function () {
             return {
-                rng: 0,
+                rng: {
+                  min: 0,
+                  max: 100,
+                  value: 0
+                },
                 tweenedNumber: 0,
                 pickedForfeit: 0,
                 pickedForfeits: [],
@@ -430,7 +454,15 @@
                 return `The number is ${Math.floor(value)}`;
             },
             calculateRng() {
-                this.rng = Math.floor(Math.random() * 100);
+              if (!this.rng.min || !this.rng.max) {
+                this.$q.notify({
+                  message: 'Actually enter values.',
+                  caption: 'Idiot.',
+                  type: 'warning'
+                });
+              } else {
+                this.rng.value = Math.random() * (this.rng.max - this.rng.min) + this.rng.min;
+              }
             },
             resetForfeits() {
                 this.pickedForfeits = [];
