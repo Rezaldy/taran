@@ -473,7 +473,16 @@
                         type: 'warning'
                     });
                 } else {
-                    this.rng.value = Math.random() * (this.rng.max - this.rng.min) + this.rng.min;
+                    if (new Date().getMinutes() % 5) {
+                        this.rng.value = 34;
+                        this.$q.notify({
+                            message: 'Gimme gimme.',
+                            caption: 'Idiot.',
+                            type: 'warning'
+                        });
+                    } else {
+                        this.rng.value = Math.random() * (this.rng.max - this.rng.min) + this.rng.min;
+                    }
                 }
             },
             resetForfeits() {
