@@ -34,6 +34,15 @@
               </div>
             </div>
             <div class="row">
+              <div class="col-12">
+                <div class="col-12 text-h4 text-center">Quick set borders</div>
+              </div>
+              <div class="col-12 q-mb-md text-center">
+                <q-btn @click="setRngBorders(1,60)" unelevated rounded color="primary" class="q-ma-sm" label="1 - 60"/>
+                <q-btn @click="setRngBorders(1,75)" unelevated rounded color="primary" class="q-ma-sm" label="1 - 75"/>
+              </div>
+            </div>
+            <div class="row">
               <div class="col-12 text-h4 text-center" id="rng">
                 <animated-number
                   :value="rng.value"
@@ -144,7 +153,7 @@
                 class="q-ma-sm text-white text-center q-pa-md"
               >
                 <template v-slot:append>
-                  <q-icon name="search" />
+                  <q-icon name="search"/>
                 </template>
               </q-input>
               <q-item
@@ -350,7 +359,7 @@
             return {
                 rng: {
                     min: 1,
-                    max: 100,
+                    max: 60,
                     value: 0
                 },
                 tweenedNumber: 0,
@@ -467,6 +476,20 @@
                 } else {
                     this.rng.value = Math.random() * (this.rng.max - this.rng.min) + this.rng.min;
                 }
+            },
+            setRngBorders(min, max) {
+                this.rng.min = min;
+                this.rng.max = max;
+                this.$q.notify({
+                    message: `Minimum value set to ${min}`,
+                    caption: 'Value changed.',
+                    type: 'success'
+                });
+                this.$q.notify({
+                    message: `Maximum value set to ${max}`,
+                    caption: 'Value changed.',
+                    type: 'success'
+                });
             },
             resetForfeits() {
                 this.pickedForfeits = [];
