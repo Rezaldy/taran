@@ -21,7 +21,7 @@
     "axios": "^0.18.1",
     "global": "^4.4.0",
     "gsap": "^3.1.1",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "quasar": "^1.0.0",
     "vue-i18n": "^8.0.0",
     "vue-luckywheel": "^0.1.2",
