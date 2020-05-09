@@ -1,41 +1,36 @@
 <template>
   <div class="col-12 text-h5 text-center" id="forfeits">
     <div class="col-12 text-h2 text-center text-white q-mb-md">Wheel of Theon</div>
-    <zoom-x-transition :delay="300"
-                     v-if="!t3enabled">
-      <vue-luckywheel
-        :key="t3enabled"
-        v-if="pickedForfeits.length < 3"
-        class="q-mt-md"
-        ref="vueLuckywheel"
-        :default-background="false"
-        :rotate-time="3"
-        :prize-index="pickedForfeit"
-        @get-prize="getPrize"
-        @game-over="gameOver">
-        <vue-luckywheel-item v-for="(prize, index) in forfeitOptions" :key="index">
-          <div :class="['name']">{{prize.name}}</div>
-          <!--                    <div class="level" v-if="prize.level > 0">{{prize.level}}</div>-->
-        </vue-luckywheel-item>
-      </vue-luckywheel>
-    </zoom-x-transition>
-    <fade-transition :delay="300" v-else>
-      <vue-luckywheel
-        :key="t3enabled"
-        v-if="pickedForfeits.length < 3"
-        class="q-mt-md"
-        ref="vueLuckywheel"
-        :default-background="false"
-        :rotate-time="3"
-        :prize-index="pickedForfeit"
-        @get-prize="getPrize"
-        @game-over="gameOver">
-        <vue-luckywheel-item v-for="(prize, index) in [...forfeitOptions, ...t3Options]" :key="index">
-          <div :class="['name']">{{prize.name}}</div>
-          <!--                    <div class="level" v-if="prize.level > 0">{{prize.level}}</div>-->
-        </vue-luckywheel-item>
-      </vue-luckywheel>
-    </fade-transition>
+    <vue-luckywheel
+      :key="t3enabled"
+      v-if="pickedForfeits.length < 3 && !t3enabled"
+      class="q-mt-md absolute"
+      ref="vueLuckywheel"
+      :default-background="false"
+      :rotate-time="3"
+      :prize-index="pickedForfeit"
+      @get-prize="getPrize"
+      @game-over="gameOver">
+      <vue-luckywheel-item v-for="(prize, index) in forfeitOptions" :key="index">
+        <div :class="['name']">{{prize.name}}</div>
+        <!--                    <div class="level" v-if="prize.level > 0">{{prize.level}}</div>-->
+      </vue-luckywheel-item>
+    </vue-luckywheel>
+    <vue-luckywheel
+      :key="t3enabled"
+      v-else-if="pickedForfeits.length < 3 && t3enabled"
+      class="q-mt-md"
+      ref="vueLuckywheel"
+      :default-background="false"
+      :rotate-time="3"
+      :prize-index="pickedForfeit"
+      @get-prize="getPrize"
+      @game-over="gameOver">
+      <vue-luckywheel-item v-for="(prize, index) in [...forfeitOptions, ...t3Options]" :key="index">
+        <div :class="['name']">{{prize.name}}</div>
+        <!--                    <div class="level" v-if="prize.level > 0">{{prize.level}}</div>-->
+      </vue-luckywheel-item>
+    </vue-luckywheel>
 
     <slide-y-up-transition>
       <q-list bordered separator class="q-mt-md">
@@ -116,7 +111,7 @@
   import VueLuckywheel from 'vue-luckywheel';
   import VueLuckywheelItem from 'vue-luckywheel';
   import 'vue-luckywheel/lib/vue-luckywheel.css';
-  import {SlideYUpTransition, ZoomXTransition, FadeTransition} from 'vue2-transitions';
+  import {SlideYUpTransition} from 'vue2-transitions';
 
   Vue.use(VueLuckywheel, VueLuckywheelItem);
 
@@ -124,8 +119,6 @@
     // name: 'ForfeitPicker',
     components: {
       SlideYUpTransition,
-      FadeTransition,
-      ZoomXTransition,
     },
     data() {
       return {
@@ -175,11 +168,6 @@
           {
             name: 'Learner set-up',
             description: 'Full Void, Whip, Trident, Cheese cape, Dragon defender',
-            mode: 0,
-          },
-          {
-            name: 'Quest gear',
-            description: 'Diving gear/bunny outfit',
             mode: 0,
           },
           {
