@@ -57,8 +57,20 @@ export default {
         {
           title: 'Twitch',
           caption: 'MLGTaran',
-          icon: 'school',
+          icon: 'pages',
           link: 'https://twitch.tv/MLGTaran'
+        },
+        {
+          title: 'Discord',
+          caption: 'Taran\'s Watch',
+          icon: 'pages',
+          link: 'https://discord.gg/G6wfKkG'
+        },
+        {
+          title: 'Twitter',
+          caption: 'MLGTaran',
+          icon: 'pages',
+          link: 'https://twitter.com/mlgtaran?lang=en'
         },
       ]
     }

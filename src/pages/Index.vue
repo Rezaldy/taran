@@ -72,54 +72,8 @@
         </div>
         <div class="col col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6">
           <div class="widget-container">
-            <div class="col-12 text-h2 text-center q-mb-md">Forfeit picker</div>
             <div class="row">
-              <div class="col-12 text-h5 text-center" id="forfeits">
-
-                <slide-y-up-transition>
-                  <vue-luckywheel
-                    v-if="pickedForfeits.length < 3"
-                    class="q-mt-md"
-                    ref="vueLuckywheel"
-                    :default-background="false"
-                    :rotate-time="3"
-                    :prize-index="pickedForfeit"
-                    @get-prize="getPrize"
-                    @game-over="gameOver">
-                    <vue-luckywheel-item v-for="(prize, index) in forfeitOptions" :key="index">
-                      <div :class="['name']">{{prize.name}}</div>
-                      <!--                    <div class="level" v-if="prize.level > 0">{{prize.level}}</div>-->
-                    </vue-luckywheel-item>
-                  </vue-luckywheel>
-                </slide-y-up-transition>
-
-                <slide-y-up-transition>
-                  <q-list bordered separator class="q-mt-md">
-                    <q-item
-                      v-for="(prize, index) in pickedForfeits"
-                      :class="{'bg-primary': prize.mode === 0, 'bg-light-green': prize.mode === 1, 'bg-red-6': prize.mode === 2}"
-                      @click="cycleMode(prize)"
-                      :key="index"
-                      clickable
-                      v-ripple
-                    >
-                      <q-item-section>
-                        {{prize.name}}
-                      </q-item-section>
-                    </q-item>
-                  </q-list>
-                </slide-y-up-transition>
-                <div class="row flex justify-center q-mt-md">
-                  <q-btn
-                    v-if="pickedForfeits.length === 3"
-                    round
-                    color="primary"
-                    :icon="fasUndoAlt"
-                    size="xl"
-                    @click="resetForfeits"
-                  />
-                </div>
-              </div>
+              <forfeit-picker></forfeit-picker>
             </div>
           </div>
         </div>
@@ -336,284 +290,183 @@
 </template>
 
 <script>
-    import Vue from 'vue';
-    import {openURL} from 'quasar';
-    import {fasDice, fasUndoAlt, fasList, fasSearch, fasPlus} from '@quasar/extras/fontawesome-v5';
-    import AnimatedNumber from "animated-number-vue";
-    import VueLuckywheel from 'vue-luckywheel';
-    import VueLuckywheelItem from 'vue-luckywheel';
-    import 'vue-luckywheel/lib/vue-luckywheel.css';
-    import axios from 'axios';
-    import {TimelineLite} from "gsap";
-    import {SlideYUpTransition} from 'vue2-transitions';
+  import Vue from 'vue';
+  import {openURL} from 'quasar';
+  import {fasDice, fasUndoAlt, fasList, fasSearch, fasPlus} from '@quasar/extras/fontawesome-v5';
+  import AnimatedNumber from 'animated-number-vue';
+  import axios from 'axios';
+  import {TimelineLite} from 'gsap';
+  import ForfeitPicker from '../components/ForfeitPicker';
 
-    Vue.use(VueLuckywheel, VueLuckywheelItem);
-
-    export default {
-        components: {
-            AnimatedNumber,
-            SlideYUpTransition,
+  export default {
+    components: {
+      ForfeitPicker,
+      AnimatedNumber,
+    },
+    name: 'Home',
+    data: function () {
+      return {
+        rng: {
+          min: 1,
+          max: 60,
+          value: 0
         },
-        name: 'Home',
-        data: function () {
-            return {
-                rng: {
-                    min: 1,
-                    max: 60,
-                    value: 0
-                },
-                tweenedNumber: 0,
-                pickedForfeit: 0,
-                pickedForfeits: [],
-                modes: [0, 1, 2],
-                forfeitOptions: [
-                    {
-                        name: 'No Scythe',
-                        mode: 0,
-                    },
-                    {
-                        name: 'No Magic',
-                        mode: 0,
-                    },
-                    {
-                        name: 'Uncharged scythe',
-                        mode: 0,
-                    },
-                    {
-                        name: 'No scythe or Sang',
-                        mode: 0,
-                    },
-                    {
-                        name: 'Vanilla Client',
-                        mode: 0,
-                    },
-                    {
-                        name: 'Week 1 ToB setup',
-                        mode: 0,
-                    },
-                    {
-                        name: 'Pure Gear',
-                        mode: 0,
-                    },
-                    {
-                        name: 'No brews, food only',
-                        mode: 0,
-                    },
-                    {
-                        name: 'Deflne setup',
-                        mode: 0,
-                    },
-                    {
-                        name: 'No specing',
-                        mode: 0,
-                    },
-                    {
-                        name: 'No protection prayers',
-                        mode: 0,
-                    },
-                    {
-                        name: 'No Piety/Rigour/Augury',
-                        mode: 0,
-                    },
-                    {
-                        name: 'No Barrages',
-                        mode: 0,
-                    },
-                    {
-                        name: 'Normal Spellbook',
-                        mode: 0,
-                    },
-                    {
-                        name: 'No running (20% verzik exempt)',
-                        mode: 0,
-                    },
-                    {
-                        name: 'Free pass',
-                        mode: 0,
-                    },
-                    {
-                        name: 'Pk Gear',
-                        mode: 0,
-                    },
-                ],
-                lootListOptions: [],
-                lootFilter: '',
-                lootInput: '',
-                lootCallWinnerDialog: false,
-                lootCallWinner: '',
-                lootCallToAdd: {
-                    name: '',
-                    call: '',
-                    active: false,
-                },
-            };
+        tweenedNumber: 0,
+        lootListOptions: [],
+        lootFilter: '',
+        lootInput: '',
+        lootCallWinnerDialog: false,
+        lootCallWinner: '',
+        lootCallToAdd: {
+          name: '',
+          call: '',
+          active: false,
         },
-        methods: {
-            getFilteredLootList() {
-                if (this.lootFilter.length) {
-                    return this.lootListOptions.filter((option) =>
-                        option.call.toLowerCase().indexOf(this.lootFilter.toLowerCase()) !== -1);
-                }
-
-                return this.lootListOptions;
-            },
-            formatToPrice(value) {
-                return `The number is ${Math.floor(value)}`;
-            },
-            calculateRng() {
-                if (this.rng.min > this.rng.max) {
-                    this.$q.notify({
-                        message: 'Can a minimum value truly be higher than a maximum value?',
-                        caption: 'Idiot.',
-                        type: 'warning'
-                    });
-                } else if (!Number.isInteger(this.rng.min) || !Number.isInteger(this.rng.max)) {
-                    this.$q.notify({
-                        message: 'Actually enter values.',
-                        caption: 'Idiot.',
-                        type: 'warning'
-                    });
-                } else {
-                    this.rng.value = Math.random() * (this.rng.max - this.rng.min) + this.rng.min;
-                }
-            },
-            setRngBorders(min, max) {
-                this.rng.min = min;
-                this.rng.max = max;
-                this.$q.notify({
-                    message: `Minimum value set to ${min}`,
-                    caption: 'Value changed.',
-                    type: 'success'
-                });
-                this.$q.notify({
-                    message: `Maximum value set to ${max}`,
-                    caption: 'Value changed.',
-                    type: 'success'
-                });
-            },
-            resetForfeits() {
-                this.pickedForfeits = [];
-            },
-            getPrize() {
-                setTimeout(() => {
-                    this.prizeIndex = Math.floor(Math.random() * this.forfeitOptions.length);
-                    this.$nextTick(this.$refs.vueLuckywheel.draw);
-                }, 300);
-            },
-            gameOver() {
-                this.pickedForfeits.push(this.forfeitOptions[this.prizeIndex]);
-            },
-            cycleMode(prize) {
-                switch (prize.mode) {
-                    case 0:
-                    case 1:
-                        prize.mode++;
-                        break;
-                    case 2:
-                        prize.mode = 0;
-                        break;
-                }
-            },
-            openLootList() {
-                openURL('https://twitch.center/customapi/quote/list?token=ba3ed13c');
-            },
-            retrieveLootListOptions() {
-                const testURL = '//twitch.center/customapi/quote/list?token=ba3ed13c';
-                const myInit = {
-                    method: 'GET',
-                    mode: 'no-cors',
-                };
-
-                const myRequest = new Request(testURL, myInit);
-
-                fetch(myRequest).then(function (response) {
-                    return response;
-                }).then(function (response) {
-                    console.log(response);
-                }).catch(function (e) {
-                    console.log(e);
-                });
-            },
-            processLootInput() {
-                // console.log(this.lootInput.split('\n'));
-                const lootCallers = [];
-                this.lootListOptions = [];
-
-                if (this.lootInput.length) {
-                    if (this.lootInput === 'There are no quotes added') {
-                        this.$q.notify({
-                            message: 'Did you read? The list is empty.',
-                            caption: 'Idiot.',
-                            type: 'warning'
-                        });
-                    } else {
-                        // \d\. a,(.*)\((.*)\) Regex for one line
-                        if (this.lootInput.match(/(?:\d\. a,(.*)\((.*)\)\|[\n]?)/gm)) {
-                            for (const lootCall of this.lootInput.match(/(?:\d\. a,(.*)\((.*)\)\|[\n]?)/gm)) {
-                                const lootCallMatch = lootCall.match(/\d\. a,(.*)\((.*)\)\|/);
-                                const lootCallObj = {
-                                    name: lootCallMatch[1],
-                                    call: decodeURI(lootCallMatch[2].charAt(0).toUpperCase() + lootCallMatch[2].slice(1)),
-                                    active: false,
-                                };
-                                this.lootListOptions.push(lootCallObj);
-                            }
-                            this.$q.notify({
-                                message: 'Loot processed!',
-                                caption: 'Select the people that chose correctly.',
-                                type: 'positive'
-                            });
-                        } else {
-                            this.$q.notify({
-                                message: 'Okay, cool, but I can\'t read that.',
-                                caption: 'Try again, but better.',
-                                type: 'negative'
-                            });
-                        }
-                    }
-                } else {
-                    this.$q.notify({
-                        message: 'WHERE IS THE DAMN LOOTLIST?',
-                        caption: 'Sit.',
-                        type: 'warning'
-                    });
-                }
-            },
-            pickLootCaller() {
-                const chosenCalls = this.lootListOptions.filter(function (o) {
-                    return o.active;
-                }).map(o => o.name);
-                this.lootCallWinner = chosenCalls[Math.floor(Math.random() * chosenCalls.length)];
-                this.lootCallWinnerDialog = true;
-            },
-            addLootCall() {
-                if (this.lootCallToAdd.name !== '' && this.lootCallToAdd.call) {
-                    this.lootListOptions.push({
-                        name: this.lootCallToAdd.name,
-                        call: this.lootCallToAdd.call,
-                        active: this.lootCallToAdd.active,
-                    });
-                    this.lootCallToAdd.name = '';
-                    this.lootCallToAdd.call = '';
-                } else {
-                    this.$q.notify({
-                        message: 'Check if you have all fields filled in.',
-                        type: 'negative'
-                    });
-                }
-            },
-            rngChanged() {
-                console.log(this.rng);
-            }
-        },
-        created() {
-            this.fasDice = fasDice;
-            this.fasUndoAlt = fasUndoAlt;
-            this.fasList = fasList;
-            this.fasSearch = fasSearch;
-            this.fasPlus = fasPlus;
+      };
+    },
+    methods: {
+      getFilteredLootList() {
+        if (this.lootFilter.length) {
+          return this.lootListOptions.filter((option) =>
+            option.call.toLowerCase().indexOf(this.lootFilter.toLowerCase()) !== -1);
         }
+
+        return this.lootListOptions;
+      },
+      formatToPrice(value) {
+        return `The number is ${Math.floor(value)}`;
+      },
+      calculateRng() {
+        if (this.rng.min > this.rng.max) {
+          this.$q.notify({
+            message: 'Can a minimum value truly be higher than a maximum value?',
+            caption: 'Idiot.',
+            type: 'warning'
+          });
+        } else if (!Number.isInteger(this.rng.min) || !Number.isInteger(this.rng.max)) {
+          this.$q.notify({
+            message: 'Actually enter values.',
+            caption: 'Idiot.',
+            type: 'warning'
+          });
+        } else {
+          this.rng.value = Math.random() * (this.rng.max - this.rng.min) + this.rng.min;
+        }
+      },
+      setRngBorders(min, max) {
+        this.rng.min = min;
+        this.rng.max = max;
+        this.$q.notify({
+          message: `Minimum value set to ${min}`,
+          caption: 'Value changed.',
+          type: 'success'
+        });
+        this.$q.notify({
+          message: `Maximum value set to ${max}`,
+          caption: 'Value changed.',
+          type: 'success'
+        });
+      },
+      openLootList() {
+        openURL('https://twitch.center/customapi/quote/list?token=ba3ed13c');
+      },
+      retrieveLootListOptions() {
+        const testURL = '//twitch.center/customapi/quote/list?token=ba3ed13c';
+        const myInit = {
+          method: 'GET',
+          mode: 'no-cors',
+        };
+
+        const myRequest = new Request(testURL, myInit);
+
+        fetch(myRequest).then(function (response) {
+          return response;
+        }).then(function (response) {
+          console.log(response);
+        }).catch(function (e) {
+          console.log(e);
+        });
+      },
+      processLootInput() {
+        // console.log(this.lootInput.split('\n'));
+        const lootCallers = [];
+        this.lootListOptions = [];
+
+        if (this.lootInput.length) {
+          if (this.lootInput === 'There are no quotes added') {
+            this.$q.notify({
+              message: 'Did you read? The list is empty.',
+              caption: 'Idiot.',
+              type: 'warning'
+            });
+          } else {
+            // \d\. a,(.*)\((.*)\) Regex for one line
+            if (this.lootInput.match(/(?:\d\. a,(.*)\((.*)\)\|[\n]?)/gm)) {
+              for (const lootCall of this.lootInput.match(/(?:\d\. a,(.*)\((.*)\)\|[\n]?)/gm)) {
+                const lootCallMatch = lootCall.match(/\d\. a,(.*)\((.*)\)\|/);
+                const lootCallObj = {
+                  name: lootCallMatch[1],
+                  call: decodeURI(lootCallMatch[2].charAt(0).toUpperCase() + lootCallMatch[2].slice(1)),
+                  active: false,
+                };
+                this.lootListOptions.push(lootCallObj);
+              }
+              this.$q.notify({
+                message: 'Loot processed!',
+                caption: 'Select the people that chose correctly.',
+                type: 'positive'
+              });
+            } else {
+              this.$q.notify({
+                message: 'Okay, cool, but I can\'t read that.',
+                caption: 'Try again, but better.',
+                type: 'negative'
+              });
+            }
+          }
+        } else {
+          this.$q.notify({
+            message: 'WHERE IS THE DAMN LOOTLIST?',
+            caption: 'Sit.',
+            type: 'warning'
+          });
+        }
+      },
+      pickLootCaller() {
+        const chosenCalls = this.lootListOptions.filter(function (o) {
+          return o.active;
+        }).map(o => o.name);
+        this.lootCallWinner = chosenCalls[Math.floor(Math.random() * chosenCalls.length)];
+        this.lootCallWinnerDialog = true;
+      },
+      addLootCall() {
+        if (this.lootCallToAdd.name !== '' && this.lootCallToAdd.call) {
+          this.lootListOptions.push({
+            name: this.lootCallToAdd.name,
+            call: this.lootCallToAdd.call,
+            active: this.lootCallToAdd.active,
+          });
+          this.lootCallToAdd.name = '';
+          this.lootCallToAdd.call = '';
+        } else {
+          this.$q.notify({
+            message: 'Check if you have all fields filled in.',
+            type: 'negative'
+          });
+        }
+      },
+      rngChanged() {
+        console.log(this.rng);
+      }
+    },
+    created() {
+      this.fasDice = fasDice;
+      this.fasUndoAlt = fasUndoAlt;
+      this.fasList = fasList;
+      this.fasSearch = fasSearch;
+      this.fasPlus = fasPlus;
     }
+  };
 </script>
 
 <style lang="scss" scoped>
@@ -659,34 +512,6 @@
       padding: 10px 15px;
       background: rgba(255, 255, 255, .4);
       border: 1px solid rgba(86, 61, 124, .2);
-    }
-  }
-
-  .vue-lucky-wheel-main {
-    /*background-image: url('../assets/demo_background.png');*/
-    background-size: cover;
-  }
-
-  .vue-lucky-wheel-item-content {
-    font-size: 12px;
-
-    .name, .level {
-      position: absolute;
-      left: 0;
-      width: 100%;
-    }
-
-    .name {
-      top: 40px;
-      line-height: 1rem;
-
-      &.thank-you {
-        white-space: pre-line;
-      }
-    }
-
-    .level {
-      bottom: 60px;
     }
   }
 </style>
