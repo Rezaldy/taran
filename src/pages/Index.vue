@@ -400,10 +400,10 @@
               type: 'warning'
             });
           } else {
-            // \d\. a,(.*)\((.*)\) Regex for one line
-            if (this.lootInput.match(/(?:\d\. a,(.*)\((.*)\)\|[\n]?)/gm)) {
-              for (const lootCall of this.lootInput.match(/(?:\d\. a,(.*)\((.*)\)\|[\n]?)/gm)) {
-                const lootCallMatch = lootCall.match(/\d\. a,(.*)\((.*)\)\|/);
+            // \d*\. (.*)\[(.*)\] Regex for one line
+            if (this.lootInput.match(/(?:\d*\. (.*)\[(.*)]\n]?)/gm)) {
+              for (const lootCall of this.lootInput.match(/(?:\d*\. (.*)\[(.*)]\n]?)/gm)) {
+                const lootCallMatch = lootCall.match(/\d*\. (.*)\[(.*)]/);
                 const lootCallObj = {
                   name: lootCallMatch[1],
                   call: decodeURI(lootCallMatch[2].charAt(0).toUpperCase() + lootCallMatch[2].slice(1)),
